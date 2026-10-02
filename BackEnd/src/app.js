@@ -13,22 +13,16 @@ const app = express();
 // deployment
 const path = require("path");
 
+// Do this in the last
 
-// Do this in the last 
-
-
-// app.use(
-//   cors({
-//     origin: process.env.NODE_ENV === "production" 
-//       ? "https://your-render-app-name.onrender.com" // Replace with your actual Render URL
-//       : "http://localhost:5173", 
-//     credentials: true,
-//     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-//   }),
-// );
-
-
-
+app.use(
+  cors({
+    origin:
+      process.env.NODE_ENV === "production" ? "https://soulcity-gang-website.onrender.com" : "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  }),
+);
 
 app.use(
   cors({
@@ -53,9 +47,9 @@ app.use("/api/notice", noticeRouter);
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../../FrontEnd/dist")));
 
-  app.get("*", (req, res) => {
+  // Change the string "*" to the Regular Expression /(.*)/
+  app.get(/(.*)/, (req, res) => {
     res.sendFile(path.join(__dirname, "../../FrontEnd", "dist", "index.html"));
   });
 }
-
 module.exports = app;
