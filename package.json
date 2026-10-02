@@ -1,0 +1,12 @@
+{
+  "name": "gang_website",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build" : "npm install --prefix BackEnd && npm install --prefix FrontEnd npm run build --prefix FrontEnd",
+    "start" : "npm run start --prefix BackEnd"
+  },
+  "keywords": [],
+  "type": "commonjs"
+}
