@@ -12,7 +12,23 @@ const app = express();
 
 // deployment
 const path = require("path");
-const __dirname = path.resolve();
+
+
+// Do this in the last 
+
+
+// app.use(
+//   cors({
+//     origin: process.env.NODE_ENV === "production" 
+//       ? "https://your-render-app-name.onrender.com" // Replace with your actual Render URL
+//       : "http://localhost:5173", 
+//     credentials: true,
+//     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+//   }),
+// );
+
+
+
 
 app.use(
   cors({
