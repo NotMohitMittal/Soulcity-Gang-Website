@@ -5,7 +5,7 @@ const userSchema = mongoose.Schema(
   {
     profile_picture: {
       type: String,
-      default: "https://ik.imagekit.io/6ndqn3ave/gang_profiles/default-avatar",
+      default: "https://ik.imagekit.io/6ndqn3ave/gang_profiles/default-avatar",  
     },
 
     user_name: {

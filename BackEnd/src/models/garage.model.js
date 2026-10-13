@@ -30,7 +30,7 @@ const garageSchema = mongoose.Schema(
     },
     image_url: {
       type: String,
-      default: "",
+      default: "https://ik.imagekit.io/6ndqn3ave//car_models/default_car",
     },
     file_id: {
       type: String,
