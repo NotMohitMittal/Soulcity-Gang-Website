@@ -81,6 +81,47 @@ const useAuthStore = create((set) => ({
       toast.error("Unable to logout");
     }
   },
+
+  toggleOnline: async () => {
+    try {
+      const response = await AxiosClient.patch("/auth/toggle_online");
+
+      set({
+        authUser: response.data.user,
+      });
+
+      return {
+        success: true,
+        user: response.data.user,
+      };
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  uploadProfilePic: async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append("profile_image", file);
+
+      const response = await AxiosClient.post("/auth/upload-profile-pic", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        timeout: 10000,
+      });
+
+      set({ authUser: response.data.user });
+
+      return { success: true, user: response.data.user };
+    } catch (error) {
+      console.error(error);
+      return {
+        success: false,
+        message: error.response?.data?.message || "Failed to upload image",
+      };
+    }
+  },
 }));
 
 // Note: If getInventoryLogs is fetching data, it should usually be a .get() request.

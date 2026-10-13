@@ -1,5 +1,6 @@
 const garageModel = require("../models/garage.model");
 const userModel = require("../models/user.model");
+const imagekit = require("../services/imageKit.service");
 
 const previewGarage = async (req, res) => {
   try {
@@ -7,7 +8,7 @@ const previewGarage = async (req, res) => {
 
     res.status(200).json({
       message: vehicles.length === 0 ? "Garage is empty" : "Vehicles fetched",
-      vehicles, 
+      vehicles,
     });
   } catch (error) {
     console.log(error);
@@ -105,4 +106,95 @@ const removeVehicle = async (req, res) => {
   }
 };
 
-module.exports = { previewGarage, addVehicle, removeVehicle };
+// this wasn't required because you could have matched the value of the vehicle_owner_id from the garageDB and and logged-in user_id from the frontend itself -> But since too much time has been invested on this, that's why we are keeping this
+const previewPersonalGarage = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user.id);
+
+    if (!user) {
+      return res.status(401).json({
+        message: "Unauthorized | User not found",
+      });
+    }
+
+    const personalVehicles = await garageModel.find({ vehicle_owner: user });
+
+    if (!personalVehicles) {
+      return res.status(404).json({
+        message: "No personal vehicle found in your garage",
+        personalVehicles: [],
+      });
+    }
+
+    res.status(200).json({
+      message: "Personal vehicles fetched",
+      personalVehicles,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Database error while fetching personal garage",
+    });
+  }
+};
+
+const getCarModel = async (req, res) => {
+  try {
+    // 1. Require the exact vehicle ID, not the name
+    const { vehicle_id } = req.body;
+    const user = await userModel.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    if (!req.file || !vehicle_id) {
+      return res.status(400).json({
+        message: "Vehicle ID and image file are required",
+      });
+    }
+
+    const fileBase64 = req.file.buffer.toString("base64");
+
+    const uploadResponse = await imagekit.upload({
+      file: fileBase64,
+      fileName: `car_${vehicle_id}_${Date.now()}.jpg`,
+      folder: "/car_models",
+    });
+
+    // 2. Find by unique vehicle_id AND confirm the logged-in user owns it
+    const updateGarage = await garageModel.findOneAndUpdate(
+      {
+        _id: vehicle_id,
+        vehicle_owner: req.user.id,
+      },
+      {
+        image_url: uploadResponse.url,
+        file_id: uploadResponse.fileId,
+      },
+      {
+        returnDocument: "after",
+      },
+    );
+
+    if (!updateGarage) {
+      return res.status(404).json({
+        message: "Vehicle not found or you do not have permission to modify it",
+      });
+    }
+
+    res.status(200).json({
+      message: "Car image updated successfully",
+      vehicle: updateGarage,
+    });
+  } catch (error) {
+    console.error("Error uploading car image:", error);
+    res.status(500).json({
+      message: "Server error during car image upload",
+    });
+  }
+};
+
+module.exports = { previewGarage, addVehicle, removeVehicle, previewPersonalGarage, getCarModel };

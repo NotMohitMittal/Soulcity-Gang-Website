@@ -11,7 +11,7 @@ const garageSchema = mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      uppercase : true,
+      uppercase: true,
     },
     vehicle_class: {
       type: String,
@@ -22,11 +22,19 @@ const garageSchema = mongoose.Schema(
     },
     vehicle_plate: {
       type: String,
-      uppercase : true,
+      uppercase: true,
     },
     vehicle_color: {
       type: String,
       default: "#de425b",
+    },
+    image_url: {
+      type: String,
+      default: "",
+    },
+    file_id: {
+      type: String,
+      default: "",
     },
   },
   { timestamps: true },

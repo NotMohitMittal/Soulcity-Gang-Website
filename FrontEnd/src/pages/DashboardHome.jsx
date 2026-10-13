@@ -24,11 +24,8 @@ import useNoticeStore from "../store/useNoticeStore";
 import useMemberStore from "../store/useMembersStore";
 import useAuthStore from "../store/useAuthStore";
 
-
-
 const ADMIN_ROLES = ["THE BOSS", "THE UNDERBOSS/RIGHT_HAND"];
 const isAdminRole = (gang_role) => ADMIN_ROLES.includes(gang_role);
-
 
 // notice_category -> icon/color. Keys must match the enum in notice.model.js
 const CATEGORY_META = {
@@ -173,6 +170,8 @@ const DashboardHome = () => {
     }
   };
 
+  const onlineMembers = useMemo(() => (members || []).filter((member) => Boolean(member.is_online)), [members]);
+
   return (
     <div className="w-full h-full relative overflow-hidden text-white">
       <div className="pointer-events-none absolute -top-24 -right-24 w-96 h-96 bg-[#de425b]/10 rounded-full blur-[120px]" />
@@ -193,16 +192,31 @@ const DashboardHome = () => {
               variants={itemVariants}
               initial="hidden"
               animate="show"
-              className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl flex flex-col overflow-hidden"
+              className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl flex flex-col overflow-hidden shadow-2xl relative"
             >
-              <div className="flex items-center gap-3 p-5 border-b border-white/10">
-                <div className="p-2 bg-[#de425b]/15 rounded-xl text-[#de425b]">
-                  <Megaphone size={20} />
+              <div className="absolute top-0 right-0 w-64 h-64 bg-[#de425b]/5 rounded-full blur-[80px] pointer-events-none" />
+
+              <div className="flex items-center justify-between p-5 border-b border-white/10 relative z-10">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-[#de425b]/15 rounded-xl text-[#de425b] shadow-inner">
+                    <Megaphone size={20} />
+                  </div>
+                  <h2 className="text-lg font-bold tracking-tight uppercase text-gray-200">Notice Board</h2>
                 </div>
-                <h2 className="text-lg font-bold tracking-tight">Notice Board</h2>
+
+                {/* Refresh Notice Board Button */}
+                <motion.button
+                  whileHover={{ scale: 1.08, rotate: 15 }}
+                  whileTap={{ scale: 0.92 }}
+                  onClick={fetchNotices}
+                  className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors border border-white/10 shadow-sm"
+                  title="Check for new intel"
+                >
+                  <RefreshCw size={16} />
+                </motion.button>
               </div>
 
-              <div className="p-6 min-h-[260px] flex-1">
+              <div className="p-6 min-h-75 flex-1 relative z-10">
                 {isLoading ? (
                   <div className="h-full flex items-center justify-center py-12">
                     <RefreshCw className="animate-spin text-[#de425b]" size={22} />
@@ -215,56 +229,69 @@ const DashboardHome = () => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.3 }}
+                      className="flex flex-col h-full"
                     >
-                      <div className="flex items-center gap-2 flex-wrap mb-3">
+                      <div className="flex items-center gap-2 flex-wrap mb-4">
                         {(() => {
                           const cat = CATEGORY_META[currentNotice.notice_category] ?? CATEGORY_META.General;
                           const CatIcon = cat.icon;
                           return (
                             <span
-                              className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full"
-                              style={{ backgroundColor: `${cat.color}22`, color: cat.color }}
+                              className="inline-flex items-center gap-1.5 text-[15px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-md border border-white/10 shadow-sm"
+                              style={{ backgroundColor: `${cat.color}15`, color: cat.color }}
                             >
-                              <CatIcon size={11} /> {currentNotice.notice_category}
+                              <CatIcon size={12} /> {currentNotice.notice_category}
                             </span>
                           );
                         })()}
                         <span
-                          className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full"
+                          className={`inline-flex items-center gap-1.5 text-[15px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-md border border-white/10 shadow-sm ${currentNotice.notice_priority === "Critical" ? "animate-pulse border-red-500/30" : ""}`}
                           style={{
-                            backgroundColor: `${PRIORITY_META[currentNotice.notice_priority]}22`,
+                            backgroundColor: `${PRIORITY_META[currentNotice.notice_priority]}15`,
                             color: PRIORITY_META[currentNotice.notice_priority],
                           }}
                         >
                           {currentNotice.notice_priority === "Critical" && (
-                            <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-current" />
                           )}
                           {currentNotice.notice_priority} priority
                         </span>
                       </div>
 
-                      <h3 className="text-2xl font-black tracking-tight mb-2">{currentNotice.notice_title}</h3>
-                      <p className="text-gray-300 font-medium mb-3">{currentNotice.notice_summary}</p>
-                      <p className="text-gray-400 text-sm leading-relaxed whitespace-pre-line">
-                        {currentNotice.notice_description}
+                      <h3 className="text-4xl font-black tracking-tight mb-3 text-white">
+                        {currentNotice.notice_title}
+                      </h3>
+
+                      {/* Highly readable summary */}
+                      <p className="text-cyan-400 font-bold text-base mb-5 border-l-2 border-cyan-500/50 pl-3 leading-relaxed">
+                        {currentNotice.notice_summary}
                       </p>
 
-                      <div className="flex items-center gap-2 text-xs text-gray-500 mt-5 pt-4 border-t border-white/5">
+                      {/* Highly readable description */}
+                      <div className="bg-black/20 p-4 rounded-xl border border-white/5">
+                        <p className="text-gray-300 text-l leading-relaxed whitespace-pre-wrap">
+                          {currentNotice.notice_description}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-2 text-xs text-gray-500 mt-auto pt-5">
                         <Clock size={13} />
                         {new Date(currentNotice.createdAt).toLocaleString()}
                         {currentNotice.notice_author?.user_name && (
-                          <span>— posted by {currentNotice.notice_author.user_name}</span>
+                          <span className="ml-1 text-gray-400 font-bold">
+                            — Issued by {currentNotice.notice_author.user_name}
+                          </span>
                         )}
                       </div>
                     </motion.div>
                   </AnimatePresence>
                 ) : (
-                  <div className="h-full flex flex-col items-center justify-center text-center gap-2 py-12">
-                    <Megaphone size={26} className="text-gray-600" />
-                    <p className="text-gray-400 max-w-xs">
+                  <div className="h-full flex flex-col items-center justify-center text-center gap-3 py-12">
+                    <Megaphone size={32} className="text-gray-600 mb-2 opacity-30" />
+                    <p className="text-gray-400 text-sm max-w-sm">
                       {isAdmin
-                        ? "No notice is pinned yet — create one and set it as current."
-                        : "No notice has been posted yet."}
+                        ? "No notice is pinned yet. Open 'Manage Notices' to pin one to the board."
+                        : "No notice has been posted by Command yet."}
                     </p>
                   </div>
                 )}
@@ -294,7 +321,7 @@ const DashboardHome = () => {
               variants={itemVariants}
               initial="hidden"
               animate="show"
-              className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 flex items-center gap-3 min-h-[120px]"
+              className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 flex items-center gap-3 min-h-30"
             >
               <div className="p-2 bg-white/5 rounded-xl text-gray-400">
                 <Flame size={18} />
@@ -312,7 +339,7 @@ const DashboardHome = () => {
               variants={itemVariants}
               initial="hidden"
               animate="show"
-              className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl min-h-[100px]"
+              className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl min-h-25"
             />
 
             {/* Online Members */}
@@ -338,26 +365,32 @@ const DashboardHome = () => {
               </div>
 
               {/* Scrolls internally only — never grows the dashboard itself */}
-              <div className="max-h-[380px] overflow-y-auto p-3 space-y-1.5">
+              <div className="max-h-95 overflow-y-auto p-3 space-y-1.5 custom-scrollbar">
                 {isMembersLoading ? (
                   <div className="flex items-center justify-center py-10">
                     <RefreshCw className="animate-spin text-[#de425b]" size={18} />
                   </div>
-                ) : members?.length > 0 ? (
-                  members.map((member) => (
+                ) : onlineMembers.length > 0 ? (
+                  onlineMembers.map((member) => (
                     <div
                       key={member._id}
-                      className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/5 transition-colors"
+                      className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/5"
                     >
-                      <div className="w-7 h-7 rounded-lg bg-white/5 flex items-center justify-center text-[10px] font-bold text-gray-300 shrink-0">
-                        {member.user_name?.slice(0, 2).toUpperCase() || "??"}
+                      <div className="relative shrink-0">
+                        <div className="w-7 h-7 rounded-lg bg-black/60 flex items-center justify-center text-[10px] font-bold text-gray-300 shadow-inner">
+                          {member.user_name?.slice(0, 2).toUpperCase() || "??"}
+                        </div>
+                        <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_6px_#10b981] border border-black" />
                       </div>
+
                       <span className="text-sm font-medium text-gray-200 truncate">{member.user_name}</span>
-                      <span className="text-[10px] text-gray-500 truncate ml-auto">{member.gang_role}</span>
+                      <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider truncate ml-auto">
+                        {member.gang_role}
+                      </span>
                     </div>
                   ))
                 ) : (
-                  <p className="text-center text-gray-500 text-xs py-10">No members to show.</p>
+                  <p className="text-center text-gray-500 text-xs py-10">No online members detected.</p>
                 )}
               </div>
             </motion.div>

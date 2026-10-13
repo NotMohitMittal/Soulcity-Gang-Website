@@ -4,6 +4,7 @@ import { create } from "zustand";
 const useGarageStore = create((set, get) => ({
   // state
   garage: [],
+  personalVehicles: [],
 
   // actions
   getGaragePreview: async () => {
@@ -17,6 +18,23 @@ const useGarageStore = create((set, get) => ({
       return {
         success: true,
         vehicles: response.data.vehicles,
+      };
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  getPersonalGarage: async () => {
+    try {
+      const response = await AxiosClient.get("/garage/preview/personal");
+
+      set({
+        personalVehicles: response.data.personalVehicles,
+      });
+
+      return {
+        success: true,
+        personalVehicles: response.data.personalVehicles,
       };
     } catch (error) {
       console.log(error);
@@ -51,6 +69,32 @@ const useGarageStore = create((set, get) => ({
       };
     } catch (error) {
       console.log(error);
+    }
+  },
+
+  uploadVehicleImage: async (vehicle_id, file) => {
+    try {
+      const formData = new FormData();
+      formData.append("vehicle_id", vehicle_id);
+      formData.append("car_image", file);
+
+      const response = await AxiosClient.post("/garage/model/submit", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        timeout: 30000,
+      });
+
+      return {
+        success: true,
+        vehicle: response.data.vehicle,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        success: false,
+        message: error.response?.data?.message || "Image upload failed",
+      };
     }
   },
 }));

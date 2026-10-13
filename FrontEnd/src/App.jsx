@@ -16,6 +16,8 @@ import useAuthStore from "./store/useAuthStore.js";
 import PublicRoutes from "./components/PublicRoutes.jsx";
 import ProtectedRoutes from "./components/ProtectedRoutes.jsx";
 import HomeMember from "./pages/HomeMember.jsx";
+import MyProfile from "./pages/MyProfile.jsx";
+import Streams from "./pages/Streams.jsx";
 
 const App = () => {
   const location = useLocation();
@@ -92,6 +94,8 @@ const App = () => {
             <Route path="inventory" element={<Inventory />} />
             <Route path="garage" element={<Garage />} />
             <Route path="members" element={<GangMembers />} />
+            <Route path="streams" element={<Streams />  } />
+            <Route path="profile" element={<MyProfile />} />
           </Route>
         </Route>
       </Routes>

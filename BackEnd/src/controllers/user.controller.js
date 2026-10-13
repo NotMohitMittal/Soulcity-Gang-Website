@@ -1,6 +1,7 @@
-const userModel = require("../models/user.model");
-
 const jwt = require("jsonwebtoken");
+const imagekit = require("../services/imageKit.service");
+
+const userModel = require("../models/user.model");
 
 const registerUser = async (req, res) => {
   const { user_name, user_password, user_email } = req.body;
@@ -128,7 +129,7 @@ const toggleOnline = async (req, res) => {
       });
     }
 
-    user.is_online = true;
+    user.is_online = !user.is_online;
     await user.save();
 
     res.status(200).json({
@@ -143,4 +144,37 @@ const toggleOnline = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, logoutUser, validateLogin, toggleOnline };
+const uploadProfilePicture = async (req, res) => {
+  try {
+    // 1. Check if a file was actually uploaded
+    if (!req.file) {
+      return res.status(400).json({ message: "No image file provided" });
+    }
+
+    // 2. Convert the multer memory buffer into base64 for ImageKit
+    const fileBase64 = req.file.buffer.toString("base64");
+
+    // 3. Upload to ImageKit
+    const uploadResponse = await imagekit.upload({
+      file: fileBase64,
+      fileName: `profile_${req.user.id}_${Date.now()}.jpg`, // Unique filename
+      folder: "/gang_profiles", // Organizes files in your ImageKit dashboard
+    });
+
+    // 4. Save the secure URL to the database
+    const updatedUser = await userModel
+      .findByIdAndUpdate(req.user.id, { profile_picture: uploadResponse.url }, { returnDocument: "after" })
+      .select("-user_password");
+
+    res.status(200).json({
+      message: "Profile picture updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("ImageKit upload error:", error);
+    res.status(500).json({ message: "Error uploading profile picture" });
+  }
+};
+
+module.exports = { registerUser, loginUser, logoutUser, validateLogin, toggleOnline, uploadProfilePicture };
+  
