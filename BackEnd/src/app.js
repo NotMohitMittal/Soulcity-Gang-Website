@@ -7,25 +7,16 @@ const inventoryRouter = require("./routes/inventory.routes.js");
 const memberRouter = require("./routes/member.routes.js");
 const garageRouter = require("./routes/garage.routes.js");
 const noticeRouter = require("./routes/notice.routes.js");
+const streamRouter = require("./routes/stream.routes.js");
 
 const app = express();
 
 // deployment
 const path = require("path");
 
-// Do this in the last
-
 app.use(
   cors({
     origin: ["http://localhost:5173", "https://soulcity-gang-website.onrender.com"],
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-  }),
-);
-
-app.use(
-  cors({
-    origin: "http://localhost:5173", // Replace with your actual React frontend URL
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   }),
@@ -42,11 +33,11 @@ app.use("/api/inventory", inventoryRouter);
 app.use("/api/member", memberRouter);
 app.use("/api/garage", garageRouter);
 app.use("/api/notice", noticeRouter);
+app.use("/api/youtube", streamRouter);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../../FrontEnd/dist")));
 
-  // Change the string "*" to the Regular Expression /(.*)/
   app.get(/(.*)/, (req, res) => {
     res.sendFile(path.join(__dirname, "../../FrontEnd", "dist", "index.html"));
   });

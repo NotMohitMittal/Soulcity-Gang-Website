@@ -146,22 +146,18 @@ const toggleOnline = async (req, res) => {
 
 const uploadProfilePicture = async (req, res) => {
   try {
-    // 1. Check if a file was actually uploaded
     if (!req.file) {
       return res.status(400).json({ message: "No image file provided" });
     }
 
-    // 2. Convert the multer memory buffer into base64 for ImageKit
     const fileBase64 = req.file.buffer.toString("base64");
 
-    // 3. Upload to ImageKit
     const uploadResponse = await imagekit.upload({
       file: fileBase64,
       fileName: `profile_${req.user.id}_${Date.now()}.jpg`, // Unique filename
       folder: "/gang_profiles", // Organizes files in your ImageKit dashboard
     });
 
-    // 4. Save the secure URL to the database
     const updatedUser = await userModel
       .findByIdAndUpdate(req.user.id, { profile_picture: uploadResponse.url }, { returnDocument: "after" })
       .select("-user_password");
@@ -177,4 +173,3 @@ const uploadProfilePicture = async (req, res) => {
 };
 
 module.exports = { registerUser, loginUser, logoutUser, validateLogin, toggleOnline, uploadProfilePicture };
-  
