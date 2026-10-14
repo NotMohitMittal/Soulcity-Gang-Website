@@ -42,7 +42,6 @@ const About = () => {
       <div className="pointer-events-none absolute top-[-5%] right-[-10%] w-[50vw] h-[50vw] bg-[#de425b]/10 rounded-full blur-[140px]" />
 
       <div className="relative px-6 md:px-16 pt-28 pb-20 max-w-4xl mx-auto">
-        <p className="text-[#de425b] font-bold text-sm tracking-tight mb-2">// WHO WE ARE</p>
         <h1 className="text-4xl md:text-5xl font-extrabold leading-tight mb-6">
           Red Network Soulcity
         </h1>

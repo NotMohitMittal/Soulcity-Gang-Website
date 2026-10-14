@@ -120,7 +120,6 @@ const GangMembers = () => {
     <div className="w-full h-full text-white pb-10 overflow-y-auto pr-2">
       {/* ... Header and Tabs remain exactly the same ... */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-        <p className="text-[#de425b] font-bold text-sm tracking-tight mb-2 uppercase">// The Roster</p>
         <div className="flex justify-between items-end">
           <div>
             <h1 className="text-4xl font-extrabold tracking-tight mb-2">Red-Network Members</h1>

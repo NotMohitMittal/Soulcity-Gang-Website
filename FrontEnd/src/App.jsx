@@ -5,23 +5,22 @@ import About from "./pages/About.jsx";
 import Frame from "./components/Frame.jsx";
 import HomePage from "./components/HomePage";
 import Dashboard from "./pages/Dashboard.jsx";
-import Achievements from "./pages/Achievements.jsx";
-import RegistrationPage from "./pages/RegistrationLogin.jsx";
 import DashboardHome from "./pages/DashboardHome.jsx";
 import Inventory from "./pages/Inventory.jsx";
-import Garage from "./pages/Garage.jsx";
 import GangMembers from "./pages/GangMembers.jsx";
 import { useEffect } from "react";
 import useAuthStore from "./store/useAuthStore.js";
 import PublicRoutes from "./components/PublicRoutes.jsx";
 import ProtectedRoutes from "./components/ProtectedRoutes.jsx";
 import HomeMember from "./pages/HomeMember.jsx";
+import Garage from "./pages/Garage.jsx";
 import MyProfile from "./pages/MyProfile.jsx";
 import Streams from "./pages/Streams.jsx";
 
 const App = () => {
   const location = useLocation();
   const isDashboard = location.pathname.toLowerCase().startsWith("/dashboard");
+  const isStreamPage = location.pathname.toLowerCase().startsWith("/streams");
 
   const { checkAuth, authUser, isCheckingAuth } = useAuthStore();
 
@@ -49,11 +48,11 @@ const App = () => {
         position="top-right"
         toastOptions={{
           style: {
-            background: "rgba(0, 0, 0, 0.7)", // Transparent black background
-            backdropFilter: "blur(12px)", // Glassmorphism blur
-            border: "1px solid rgba(222, 66, 91, 0.4)", // Subtle crimson red border
-            borderLeft: "4px solid #de425b", // Bold red accent on the left
-            color: "#ffffff", // White text
+            background: "rgba(0, 0, 0, 0.7)", 
+            backdropFilter: "blur(12px)", 
+            border: "1px solid rgba(222, 66, 91, 0.4)", 
+            borderLeft: "4px solid #de425b", 
+            color: "#ffffff", 
             padding: "16px 24px",
             borderRadius: "1rem",
             boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.5)",
@@ -63,13 +62,13 @@ const App = () => {
           },
           success: {
             iconTheme: {
-              primary: "#de425b", // Crimson red success icon
-              secondary: "#ffffff", // White checkmark inside the icon
+              primary: "#de425b", 
+              secondary: "#ffffff", 
             },
           },
           error: {
             iconTheme: {
-              primary: "#ff3333", // Brighter red for errors
+              primary: "#ff3333", 
               secondary: "#ffffff",
             },
           },
@@ -80,8 +79,10 @@ const App = () => {
         {/* --- ROUTES ACCESSIBLE TO EVERYONE --- */}
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<About />} />
-        <Route path="/achievements" element={<Achievements />} />
         <Route path="/home/members" element={<HomeMember />} />
+        
+        {/* Streams Route moved here and explicitly set with the leading slash */}
+        <Route path="/streams" element={<Streams />} />
 
         {/* --- PUBLIC ROUTES (Only for non-logged-in users) --- */}
         <Route element={<PublicRoutes />} />
@@ -94,13 +95,13 @@ const App = () => {
             <Route path="inventory" element={<Inventory />} />
             <Route path="garage" element={<Garage />} />
             <Route path="members" element={<GangMembers />} />
-            <Route path="streams" element={<Streams />  } />
             <Route path="profile" element={<MyProfile />} />
           </Route>
         </Route>
       </Routes>
 
-      {!isDashboard && <Frame />}
+      {/* FIXED LOGIC: Show Frame ONLY if it's NOT the Dashboard AND NOT the Streams page */}
+      {!isDashboard && !isStreamPage && <Frame />}
     </div>
   );
 };

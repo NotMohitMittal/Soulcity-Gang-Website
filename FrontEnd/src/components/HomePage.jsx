@@ -16,7 +16,7 @@ const HomePage = () => {
   useEffect(() => {
     if (location.state?.requireLogin) {
       setIsRegistrationOpen(true);
-      toast.success("Login is required")
+      toast.success("Login is required");
       // Clear the state so it doesn't pop up again on refresh / back-nav
       window.history.replaceState({}, document.title);
     }
@@ -35,10 +35,16 @@ const HomePage = () => {
   return (
     <div className="w-full h-full relative">
       {/* Background layer - Absolute bottom */}
-      <div className="absolute inset-0 z-0">
-        <img src="/images/background.jpg" alt="Background" className="w-full h-full object-cover" />
-        <div className="absolute bottom-0 right-0 w-1/2 h-1/2 backdrop-blur-xl [-webkit-mask-image:radial-gradient(circle_at_bottom_right,black,transparent_70%)] mask-[radial-gradient(circle_at_bottom_right,black,transparent_70%)]" />
-      </div>
+
+      {/* 1. The Background Video */}
+      <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover z-0">
+        <source src="/videos/bg.mp4" type="video/mp4" />
+        {/* Fallback text if the video fails to load */}
+        Your browser does not support the video tag.
+      </video>
+
+      {/* 2. Optional: Dark Overlay (helps make text readable on top of moving video) */}
+      <div className="absolute inset-0 bg-black/60 z-10" />
 
       {/* Main Content Layer */}
       <div className="absolute inset-7 pt-24 p-6 z-20 pointer-events-none">
@@ -51,10 +57,10 @@ const HomePage = () => {
             we maximize the potential of every gangs. From big events to exclusive deals, we're here to support their
             role-play journey.
             <br />
-            <span className="text-gray-100 mt-1 block">#WMatters #lifeinsoulcity #RedNetwork</span>
+            <span className="text-cyan-500 text-2xl mt-1 block">#WMatters #lifeinsoulcity #RedNetwork</span>
           </p>
           <div className="flex items-center text-l font-bold tracking-widest uppercase mt-6">
-            <span className="text-black mr-4 ml-30 text-extrabold">//</span> Let's show how the gang runs
+            <span className="text-black mr-4 ml-30 text-extrabold">//</span> The finest of the Gang RP in GTA
           </div>
         </div>
 

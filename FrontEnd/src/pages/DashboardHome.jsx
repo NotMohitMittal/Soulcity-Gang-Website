@@ -179,7 +179,6 @@ const DashboardHome = () => {
 
       <div className="relative z-10 w-full h-full overflow-y-auto pb-10 pr-2">
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
-          <p className="text-[#de425b] font-bold text-sm tracking-tight mb-2">// OPERATIONS</p>
           <h1 className="text-4xl font-extrabold tracking-tight">Dashboard</h1>
           <p className="text-gray-400 text-sm mt-2">Everything the network needs to know, in one place.</p>
         </motion.div>
@@ -377,12 +376,12 @@ const DashboardHome = () => {
                       className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/5"
                     >
                       <div className="relative shrink-0">
-                        <div className="w-7 h-7 rounded-lg bg-black/60 flex items-center justify-center text-[10px] font-bold text-gray-300 shadow-inner">
-                          {member.user_name?.slice(0, 2).toUpperCase() || "??"}
+                        <div className="w-7 h-7 rounded-full bg-black/60 overflow-hidden flex items-center justify-center text-[10px] font-bold text-gray-300 shadow-inner">
+                          <img src={member.profile_picture} alt="Profile" className="w-full h-full object-cover" />
                         </div>
-                        <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_6px_#10b981] border border-black" />
+                        {/* I slightly increased the status dot border so it punches out nicely against the circular avatar */}
+                        <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_6px_#10b981] border-2 border-black" />
                       </div>
-
                       <span className="text-sm font-medium text-gray-200 truncate">{member.user_name}</span>
                       <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider truncate ml-auto">
                         {member.gang_role}

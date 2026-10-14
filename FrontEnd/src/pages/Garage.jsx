@@ -182,9 +182,7 @@ const Garage = () => {
       <div className="relative z-10 w-full h-full overflow-y-auto pb-10 pr-2">
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8 flex items-end justify-between flex-wrap gap-4">
           <div>
-            <p className="text-[#de425b] font-bold text-sm tracking-tight mb-2 uppercase">
-              {activeTab === "network" ? "// THE GARAGE" : "// RESTRICTED ACCESS"}
-            </p>
+          
             <h1 className="text-4xl font-extrabold tracking-tight">
               {activeTab === "network" ? "Vehicle Roster" : "Personal Fleet"}
             </h1>
@@ -500,5 +498,6 @@ const AddVehicleDialog = ({ isOpen, onClose, form, onChange, onSubmit, isSubmitt
     </AnimatePresence>
   );
 };
+
 
 export default Garage;

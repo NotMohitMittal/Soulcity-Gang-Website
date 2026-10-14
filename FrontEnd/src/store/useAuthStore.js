@@ -18,6 +18,7 @@ const useAuthStore = create((set) => ({
         set({
           authUser: response.data.user,
         });
+        
       }
     } catch (error) {
       console.log("Auth validation failed:", error.message);
@@ -52,6 +53,7 @@ const useAuthStore = create((set) => ({
         set({
           authUser: response.data.user,
         });
+        console.log(response.data.user)
         return { success: true };
       }
 

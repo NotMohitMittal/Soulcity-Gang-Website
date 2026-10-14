@@ -22,7 +22,7 @@ const Dashboard = () => {
     { name: "Inventory", path: "/dashboard/inventory" },
     { name: "Garage", path: "/dashboard/garage" },
     { name: "Members", path: "/dashboard/members" },
-    { name: "Streams", path: "/dashboard/streams" },
+    { name: "Streams", path: "/streams" },
   ];
 
   const handleProfileClick = () => {
@@ -231,9 +231,29 @@ const Dashboard = () => {
         </div>
       </nav>
 
-      {/* Dynamic Content Area */}
-      <div className="flex-1 p-8 overflow-y-auto bg-[#0a0a0a]/40 bg-[url('/images/thumbnail.jpg')] bg-cover bg-center bg-no-repeat bg-blend-multiply">
-        <Outlet />
+      <div className="flex-1 relative overflow-hidden">
+        
+        {/* 1. Background Video Layer */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover z-0"
+        >
+          {/* Change this path to wherever your test video is inside the public folder */}
+          <source src="/videos/bg.mp4" type="video/mp4" />
+        </video>
+
+        {/* 2. Dark Overlay Layer (Replaces your bg-[#0a0a0a]/40 blend effect) */}
+        {/* Adjust the opacity (e.g., /60 or /80) to make the text on top readable */}
+        <div className="absolute inset-0 bg-[#0a0a0a]/50 z-0" />
+
+        {/* 3. Foreground Content Layer */}
+        <div className="relative z-10 w-full h-full p-8 overflow-y-auto custom-scrollbar">
+          <Outlet />
+        </div>
+        
       </div>
 
       {/* Invisible overlay to close dropdown when clicking outside */}

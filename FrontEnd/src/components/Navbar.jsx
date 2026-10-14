@@ -8,10 +8,9 @@ const Navbar = () => {
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Our Members", path: "/home/members" },
-    { name: "Achievements", path: "/achievements" },
+    { name: "Streams", path: "/streams" },
     { name: "About", path: "/about" },
   ];
-
 
   return (
     <nav className="flex space-x-8 px-8 py-3 bg-white shadow-sm [clip-path:polygon(0_0,100%_0,95%_100%,5%_100%)]">
